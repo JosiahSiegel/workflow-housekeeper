@@ -34,3 +34,8 @@ runs:
         "${{ inputs.retain-run-count }}" \
         "${{ inputs.dry-run }}"
       shell: bash
+    - name: Create summary
+      run: |
+        echo "### :sparkles: Workflow Housekeeper :sparkles:" >> $GITHUB_STEP_SUMMARY
+        echo -e "${{ steps.local-action.outputs.housekeeping_output }}" >> $GITHUB_STEP_SUMMARY
+      shell: bash

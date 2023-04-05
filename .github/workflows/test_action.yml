@@ -22,9 +22,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           ignore-branch-workflows: false
-          retention-time: '0 weeks'
-          retain-run-count: 3
+          retention-time: '0 minutes'
+          retain-run-count: 2
           dry-run: false
-      - name: Get outputs
-        run: |
-          echo "output: ${{ steps.local-action.outputs.housekeeping_output }}"

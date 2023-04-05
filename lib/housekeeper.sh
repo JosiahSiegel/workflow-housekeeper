@@ -32,7 +32,8 @@ echo "time_threshold: $retention_time"
 if [[ -z $retain_run_count ]]; then
   retain_run_count=0
 fi
-echo "retain_run_count: $retain_run_count"
+let retain_run_count2=retain_run_count*2
+echo "retain_run_count: $retain_run_count2"
 
 # dry_run
 if [[ -z $dry_run ]]; then
@@ -48,20 +49,22 @@ query=".workflow_runs[] \
 "$files"
 )
 $keep_stmt
-| (.id)"
+| (.path,.id)"
 
 # Get run ids
 output=$(gh api --paginate $runs --jq "$query")
 output=($(echo $output | tr " " "\n"))
-output=${output[@]:$retain_run_count}
-echo "housekeeping_output=$(echo $output)" >> $GITHUB_OUTPUT
+output=${output[@]:$retain_run_count2}
 
 # Delete or echo run ids
 for id in $output
 do
   if [[ $dry_run = false ]]; then
-    gh api --silent $runs/$id -X DELETE
+    [[ $id != ".git"* ]] && gh api --silent $runs/$id -X DELETE
   else
-    echo "gh api --silent $runs/$id -X DELETE"
+    [[ $id != ".git"* ]] && echo "gh api --silent $runs/$id -X DELETE" || echo "$id"
   fi
+  [[ $id = ".git"* ]] && summary+="  * $id" || summary+=" $id\n"
 done
+
+echo "housekeeping_output=$(echo "${summary}")" >> $GITHUB_OUTPUT
