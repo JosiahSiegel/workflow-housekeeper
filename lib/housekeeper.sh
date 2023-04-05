@@ -14,7 +14,7 @@ fi
 echo "ignore_branch_workflows: $ignore_branch_workflows"
 
 if [[ $ignore_branch_workflows = true ]]; then
-  files=$(ls -1 .github/workflows/ | sed  's/^/and .path != \".github\/workflows\//;s/$/\"/')
+  files=$(ls -1 .github/workflows/ | sed 's/^/and .path != \".github\/workflows\//;s/$/\"/')
 else
   files=""
 fi
@@ -57,8 +57,7 @@ output=($(echo $output | tr " " "\n"))
 output=${output[@]:$retain_run_count2}
 
 # Delete or echo run ids
-for id in $output
-do
+for id in $output; do
   if [[ $dry_run = false ]]; then
     [[ $id != ".git"* ]] && gh api --silent $runs/$id -X DELETE
   else
@@ -67,4 +66,4 @@ do
   [[ $id = ".git"* ]] && summary+="  * $id" || summary+=" $id\n"
 done
 
-echo "housekeeping_output=$(echo "${summary}")" >> $GITHUB_OUTPUT
+echo "housekeeping_output=$(echo "${summary}")" >>$GITHUB_OUTPUT
