@@ -64,6 +64,9 @@ for id in $output; do
     [[ $id != ".git"* ]] && echo "gh api --silent $runs/$id -X DELETE" || echo "$id"
   fi
   [[ $id = ".git"* ]] && summary+="  * $id" || summary+=" $id\n"
+
+  # Prevent rate limit
+  sleep 1;
 done
 
 echo "housekeeping_output=$(echo "${summary}")" >>$GITHUB_OUTPUT
